@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Prediction</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .file-input-container {
+            position: relative;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 400px;
+        }
+        .file-input {
+            width: 100%;
+            padding: 10px;
+            border: 2px dashed #3498db;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            text-align: center;
+        }
+        .submit-btn {
+            padding: 12px 24px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .submit-btn:hover {
+            background-color: #2980b9;
+        }
+        .preview-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #image-preview {
+            max-width: 100%;
+            max-height: 300px;
+            display: none;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        .result-container {
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f0f8ff;
+            display: {% if prediction %}block{% else %}none{% endif %};
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Prediction</h1>
+        
+        <form class="upload-form" action="/predict" method="POST" enctype="multipart/form-data">
+            <div class="file-input-container">
+                <input type="file" name="image" id="image-upload" accept="image/*" class="file-input" required>
+            </div>
+            
+            <div class="preview-container">
+                <p>Image Preview:</p>
+                <img id="image-preview" src="#" alt="Image Preview">
+            </div>
+            
+            <button type="submit" class="submit-btn">Predict</button>
+        </form>
+        
+        <div class="result-container">
+            {% if prediction %}
+                <h2>Prediction Result:</h2>
+                <p>{{ prediction }}</p>
+                {% if confidence %}
+                    <p>Confidence: {{ confidence }}%</p>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Preview the uploaded image
+        document.getElementById('image-upload').addEventListener('change', function(event) {
+            const preview = document.getElementById('image-preview');
+            const file = event.target.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
